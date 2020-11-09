@@ -1,0 +1,30 @@
+﻿@page "/"
+@using BlazorTest.Components.LoadingIndicator
+@using BlazorTest.Data
+@using BlazorTest.Data.Proposals
+@inject GetWeatherForecastQuery_Proposal1 DataQueryProposal1
+
+<h1>Weather_Proposal1</h1>
+@if (DataQueryProposal1.Result?.IsLoading ?? true)
+{
+    <LoadingIndicator></LoadingIndicator>
+}
+else
+{
+    @foreach (var forecast in DataQueryProposal1.Result?.Data ?? new WeatherForecast[]{})
+    {
+        <div>@forecast.Summary</div>
+    }
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        DataQueryProposal1.PropertyChanged += () => InvokeAsync(StateHasChanged);
+        Task.Run(async () =>
+        {
+            await DataQueryProposal1.GetWeatherForecastAsync(DateTime.Now);
+        });
+    }
+}
+
